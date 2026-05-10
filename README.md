@@ -1,119 +1,175 @@
+# Causal Inference & Policy Analysis in R
 
-# Causal Inference & Econometrics — Applied Replication Studies
+This repository contains several projects exploring how causal inference methods can be applied to real-world economic, behavioral, and policy questions using R.
 
-Replication studies of landmark economics papers using real government microdata. Each project applies a distinct causal inference method to answer a high-stakes policy question, builds the full analytical dataset from raw sources, and validates outputs against published benchmarks.
+Across these projects, I worked with both observational and experimental datasets while practicing data cleaning, statistical modeling, visualization, and causal reasoning. A major focus of the analyses was understanding how different research designs try to separate correlation from possible causal effects, while also showing how modeling choices and sample construction can change conclusions.
 
-These are not tutorial exercises. The papers replicated here are among the most cited and contested in labor economics. Replicating them from scratch — constructing datasets from raw IPUMS CPS microdata, implementing top-code corrections, applying CPI deflation, running weak instrument diagnostics, and evaluating sensitivity to researcher analytic choices — is the kind of work that separates analysts who understand causality from those who run regressions.
-
----
-
-## Why Causal Inference
-
-Correlation is easy. Causality is hard. Most business and policy decisions require knowing whether X *caused* Y, not just whether they moved together. The methods in this repo are the standard toolkit for answering causal questions with observational data:
-
-- **IV/2SLS** isolates exogenous variation to remove omitted variable bias
-- **Difference-in-Differences** uses treatment and control groups across time to identify policy effects
-- **Experimental OLS** with interaction terms identifies heterogeneous treatment effects in randomized settings
-- **Sensitivity analysis** tests whether conclusions hold under defensible alternative assumptions
+The goal of this repository was both to strengthen my technical skills in R and to better understand how researchers work through difficult questions using imperfect real-world data. These kinds of methods are also commonly used in healthcare, policy, and business settings when randomized experiments are difficult or unrealistic.
 
 ---
 
-## Projects
+## Methods Covered
 
-### 1. Instrumental Variables — Does Immigration Raise or Lower Native Wages?
+The projects in this repository include several commonly used causal inference approaches, including:
+
+- Instrumental Variables (IV / 2SLS)
+- Difference-in-Differences (DiD)
+- Experimental OLS regression
+- Interaction effects
+- Sensitivity analysis
+- Survey-weighted analysis
+
+These methods are widely used in economics, healthcare, public policy, and social science research when analysts are trying to estimate the effects of interventions or behaviors using observational data.
+
+---
+
+# Projects
+
+## 1. Instrumental Variables — Immigration and Native Wages
+
 **File:** `lab_iv_instrumental_variables.Rmd`
 
-**The question:** Does immigration increase economic output for native workers, or does labor market competition depress wages?
+### Research Question
+How does immigration affect wages for native workers?
 
-**The identification problem:** Immigrants do not move randomly. They concentrate in economically strong cities, which independently raises wages. A naive OLS regression conflates the causal effect of immigration with the underlying conditions that attracted immigrants in the first place.
+### Background
+One of the biggest challenges in studying immigration is that immigrants do not move randomly. They are often drawn to areas with stronger labor markets and better economic opportunities, making it difficult to separate the effects of immigration itself from the conditions that already existed in those areas.
 
-**The solution:** The Card (2001) enclave instrument predicts immigrant inflows using historical settlement patterns interacted with national immigration growth by country of origin. This generates variation driven by historical geography and global supply shocks, plausibly independent of current local economic conditions.
+### Approach
+This project uses an instrumental variables framework based on historical immigrant settlement patterns to estimate immigration effects while trying to reduce endogeneity bias.
 
-**Key results:**
-- First stage F-statistic = **43** — well above the conventional F > 10 threshold
-- Wu-Hausman p-value = **0.0016** — OLS is statistically confirmed to be biased; IV is preferred
-- IV estimate (0.01455) exceeds OLS (0.01085), suggesting OLS was *downward* biased — immigrants may also sort to economically weaker states, partially offsetting the upward endogeneity from strong-city sorting
+The analysis compares standard OLS estimates with IV estimates and also evaluates instrument strength using common diagnostic tests.
 
-**Methods:** OLS, IV/2SLS, clustered standard errors, weak instrument F-test, Wu-Hausman test
-**Packages:** `AER`, `lmtest`, `sandwich`, `haven`, `tidyverse`
+### Key Findings
+- The first-stage F-statistic was above the conventional weak instrument threshold
+- Results showed noticeable differences between OLS and IV estimates
+- The comparison helped illustrate how omitted variable bias and sorting effects can influence labor market analyses
+
+### Skills & Methods
+- OLS regression
+- IV / 2SLS estimation
+- Clustered standard errors
+- Weak instrument testing
+- Wu-Hausman testing
+
+### Packages
+`AER`, `lmtest`, `sandwich`, `haven`, `tidyverse`
 
 ---
 
-### 2. Experimental OLS — Do Women Hide Ambition in the Marriage Market?
+## 2. Experimental OLS — Ambition and Social Signaling
+
 **File:** `lab_acting_wife_replication.Rmd`
 
-**The question:** Do single women strategically conceal career ambition when their preferences are observable to male peers?
+### Research Question
+Do people change how they present career ambition when their responses are publicly observable?
 
-**The paper:** Bursztyn, Fujiwara & Pallais (2017), *American Economic Review*. MBA students were randomly assigned to report career preferences either privately or publicly. The randomization makes the treatment exogenous — there is no selection bias.
+### Background
+This project replicates portions of the paper *Acting Wife* by Bursztyn, Fujiwara, and Pallais (2017), which studied how MBA students responded differently when career preferences were shared publicly versus privately.
 
-**Key results (Panel A of Table 4 replicated):**
-- Single women in the public condition reported **$18,100 lower** desired annual salaries (p = 0.030)
-- **6.9 fewer** desired travel days per month (p = 0.005)
-- **0.75 lower** self-reported professional ambition on a 1–5 scale (p < 0.001)
-- Placebo outcomes (competitiveness, writing ability) are near zero and insignificant — confirming the effects are not driven by general social desirability bias
-- Effects are specific to single women; partnered women and men show no significant changes
+Because treatment assignment was randomized, the study design helps reduce selection bias and makes it easier to interpret differences between groups.
 
-**Sensitivity analysis:** Following Gelman's critique of researcher degrees of freedom, an alternative coding of single status is tested. Key effects remain directionally consistent but some shrink — illustrating how defensible analytic choices can determine which results clear significance thresholds.
+### Approach
+The analysis uses OLS regression with interaction terms and robust standard errors to examine differences across treatment conditions and demographic groups.
 
-**Methods:** Bivariate OLS, HC1 robust standard errors, interaction terms, placebo testing, sensitivity analysis
-**Packages:** `lmtest`, `sandwich`, `haven`, `jtools`, `tidyverse`
+Additional sensitivity checks were included to look at how alternative coding decisions affected results.
+
+### Key Findings
+- Public observability influenced reported career preferences among some groups
+- Several placebo outcomes showed minimal effects, helping evaluate whether changes reflected broader response bias
+- Sensitivity analyses showed that some estimates changed depending on modeling assumptions and variable definitions
+
+### Skills & Methods
+- Experimental OLS regression
+- Interaction terms
+- HC1 robust standard errors
+- Placebo testing
+- Sensitivity analysis
+
+### Packages
+`lmtest`, `sandwich`, `haven`, `jtools`, `tidyverse`
 
 ---
 
-### 3. Survey-Weighted Microdata — Health, Employment, and Household Characteristics
+## 3. Survey-Weighted Microdata Analysis
+
 **File:** `lab_ipums_cps_analysis.Rmd`
 
-**The question:** How do health status, disability, and household characteristics relate to labor market outcomes and intergenerational wellbeing?
+### Research Question
+How are health status, disability, and household characteristics associated with employment outcomes and household wellbeing?
 
-**The data challenge:** Working with IPUMS CPS ASEC microdata requires careful attention to survey weight application, universe restrictions, labeled variable handling, and the distinction between person-level and household-level weights. Failing to account for these produces meaningless population estimates.
+### Background
+This project uses IPUMS CPS ASEC microdata and focuses heavily on data preparation and survey methodology. Large survey datasets require careful handling of weights, universe restrictions, and labeled variables in order to produce interpretable estimates.
 
-**Key results:**
-- Employment rates decline monotonically from **63.8%** (excellent health) to **11.5%** (poor health) — a 52-percentage-point gap
-- Workers in poor health average **32 hours per week** versus 38–39 for excellent health workers, compounding the employment gap
-- Among deaf respondents who are married, **96.8%** have a deaf spouse — striking evidence of assortative mating on disability status
-- Children of mothers in excellent health are overwhelmingly rated excellent health themselves; the correlation is visually monotonic but partially attributable to reporting bias since the same respondent rates both
+### Approach
+The analysis uses survey-weighted grouped summaries and visualizations to examine relationships between health, labor force participation, working hours, and household characteristics.
 
-**Methods:** Survey-weighted means, grouped summarize, ggplot2 visualization, intergenerational correlation analysis
-**Packages:** `dplyr`, `haven`, `ipumsr`, `ggplot2`
+### Key Findings
+- Employment rates differed meaningfully across self-reported health categories
+- Poor health was associated with lower average working hours
+- Household-level patterns showed clustering across some demographic and health characteristics
+
+### Skills & Methods
+- Survey-weighted analysis
+- Data cleaning and preprocessing
+- Grouped summaries
+- ggplot2 visualization
+- Microdata handling
+
+### Packages
+`dplyr`, `haven`, `ipumsr`, `ggplot2`
 
 ---
 
-### 4. Difference-in-Differences — Did the Mariel Boatlift Depress Wages?
+## 4. Difference-in-Differences — The Mariel Boatlift
+
 **File:** `lab_mariel_boatlift_did.Rmd`
 
-**The question:** Did the sudden arrival of 125,000 Cuban immigrants in Miami in 1980 depress wages for low-skilled native workers?
+### Research Question
+Did the Mariel Boatlift affect wages for low-skilled native workers in Miami?
 
-**The controversy:** Borjas (2017) finds significant wage depression using a narrow sample of non-Hispanic men aged 25–59 without a high school diploma. Critics (Peri and Yasenov) argue the results disappear under alternative sample choices and may be driven by changes in Miami's racial workforce composition rather than the boatlift itself — a textbook omitted variable problem in a DiD design.
+### Background
+The Mariel Boatlift remains one of the most discussed case studies in labor economics because researchers have reached different conclusions depending on sample construction and modeling decisions.
 
-**What this replication does:**
-- Constructs the Borjas sample from raw IPUMS CPS microdata (1976–1989) with full top-code correction and CPI deflation to 1980 dollars
-- Replicates wage trend plots for Miami vs. comparison cities
-- Tests the racial composition critique directly by plotting the white worker share in Miami vs. non-Miami over time
-- Runs an alternative sample (ages 19–65, both sexes) to evaluate sensitivity to demographic restrictions
-- Implements a formal DiD regression with pre/post and treatment/control indicators
+This project explores some of those differences by replicating parts of the analysis using IPUMS CPS microdata.
 
-**Key takeaway:** The Mariel Boatlift controversy is a master class in how sample construction and researcher degrees of freedom drive empirical results in contested policy debates. Small, defensible analytic choices determine whether the boatlift appears to have harmed native wages or had no detectable effect.
+### Approach
+The project constructs samples from raw CPS data, applies inflation adjustments, and compares wage trends between Miami and comparison cities before and after the boatlift.
 
-**Methods:** Difference-in-Differences, CPI deflation, top-code correction, raw IPUMS microdata construction, racial composition analysis, sensitivity analysis
-**Packages:** `ipumsr`, `tidyverse`, `jtools`, `huxtable`
+Additional analyses explore how demographic restrictions and sample definitions affect estimated results.
 
----
+### Key Takeaways
+- Results were sensitive to sample construction choices
+- Small differences in demographic restrictions changed estimated effects noticeably
+- The project highlighted why transparency and robustness checks matter in empirical research
 
-## Data Sources
+### Skills & Methods
+- Difference-in-Differences
+- CPI adjustment
+- Top-code correction
+- Time-series comparison
+- Sensitivity analysis
 
-All analyses use publicly available data:
-
-| Dataset | Source | Access |
-|---|---|---|
-| IPUMS CPS ASEC (1976–1989) | [cps.ipums.org](https://cps.ipums.org/cps/) | Free account required |
-| Peri state-panel IV data | Giovanni Peri, UC Davis | Available from author's faculty page |
-| Acting Wife experimental data | Bursztyn, Fujiwara & Pallais (2017) | AER data repository |
-
-Data files are not included in this repository. Download each dataset from the sources above and place files in your working directory before running.
+### Packages
+`ipumsr`, `tidyverse`, `jtools`, `huxtable`
 
 ---
 
-## How to Run
+# Data Sources
+
+All datasets used in this repository are publicly available:
+
+| Dataset | Source |
+|---|---|
+| IPUMS CPS ASEC | cps.ipums.org |
+| Peri IV state-panel data | Giovanni Peri |
+| Acting Wife replication data | AER Data Repository |
+
+Data files are not included in this repository. Download datasets separately and place them in your working directory before running the analyses.
+
+---
+
+# How to Run
 
 ```r
 install.packages(c(
@@ -123,37 +179,43 @@ install.packages(c(
 ```
 
 1. Clone this repository
-2. Download datasets from the sources above
+2. Download the datasets listed above
 3. Open any `.Rmd` file in RStudio
-4. Click **Knit** to render as HTML
+4. Knit the file to render the analysis
 
 ---
 
-## Skills Demonstrated
+# Skills Demonstrated
 
-| Category | Specifics |
-|---|---|
-| Causal inference | IV/2SLS, DiD, experimental OLS, interaction terms |
-| Data construction | Raw IPUMS microdata, top-code correction, CPI deflation, variable derivation |
-| Statistical rigor | Clustered SEs, HC1/HC3 robust SEs, weak instrument F-tests, Wu-Hausman test |
-| Sensitivity analysis | Alternative coding, sample restriction sensitivity, researcher degrees of freedom |
-| Visualization | ggplot2 with survey-weighted grouped summaries |
-| Reproducibility | R Markdown, documented data sources, annotated code throughout |
+Throughout these projects, I worked with:
+- Instrumental Variables (IV / 2SLS)
+- Difference-in-Differences
+- Experimental regression analysis
+- Robust standard errors and interaction effects
+- Survey-weighted microdata
+- Data cleaning and preprocessing in R
+- ggplot2 visualizations
+- R Markdown workflows and reproducible analysis
+- CPI adjustment and variable construction
+- Sensitivity analysis and model comparison
 
 ---
 
-## References
+# Future Improvements
 
-- Card, D. (2001). *Immigrant Inflows, Native Outflows, and the Local Labor Market Impacts of Higher Immigration.* Journal of Labor Economics.
-- Borjas, G. (2017). *The Wage Impact of the Marielitos: A Reappraisal.* ILR Review.
-- Bursztyn, L., Fujiwara, T., & Pallais, A. (2017). *Acting Wife: Marriage Market Incentives and Labor Market Investments.* American Economic Review.
-- Peri, G. (2007). *Immigrants' Complementarities and Native Wages: Evidence from California.* NBER Working Paper.
-- Gelman, A. & Loken, E. (2014). *The Statistical Crisis in Science.* American Scientist.
+Some possible future additions include:
+- Additional robustness checks
+- Expanded visualizations
+- Alternative model specifications
+- Larger comparative policy analyses
+- Interactive reporting outputs
 
 ---
 
 ## Author
 
-**Olivia Bonnette**
-B.S. Biomedical Engineering & Business Management, Case Western Reserve University (May 2026)
-[linkedin.com/in/oliviabonnette](https://linkedin.com/in/oliviabonnette) | [GitHub](https://github.com/oliviabon77)
+**Olivia Bonnette**  
+B.S. Biomedical Engineering & Business Management  
+Case Western Reserve University (May 2026)
+
+[LinkedIn](https://linkedin.com/in/oliviabonnette) | [GitHub](https://github.com/oliviabon77)

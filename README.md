@@ -156,16 +156,7 @@ Additional analyses explore how demographic restrictions and sample definitions 
 ---
 
 # Data Sources
-
-All datasets used in this repository are publicly available:
-
-| Dataset | Source |
-|---|---|
-| IPUMS CPS ASEC | cps.ipums.org |
-| Peri IV state-panel data | Giovanni Peri |
-| Acting Wife replication data | AER Data Repository |
-
-Data files are not included in this repository. Download datasets separately and place them in your working directory before running the analyses.
+The Acting Wife and Peri IV datasets are included in this repository. The Mariel Boatlift analysis uses a mock CPS dataset (cps_mock.csv) provided for demonstration. IPUMS CPS microdata requires a free account at cps.ipums.org
 
 ---
 
